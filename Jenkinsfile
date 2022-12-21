@@ -16,7 +16,7 @@ pipeline {
                 steps {
                     script {
                         echo "building the docker image ..."
-                        withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVarible:'PASS', username: 'USER')]) {
+                        withCredentials([usernamePassword(credentialsId: 'dockerHub-credntls', passwordVarible:'PASS', username: 'USER')]) {
                             sh 'docker build -t ardevopsun/simple-java-maven-app:jma-2.0 .'
                             sh "echo $PASS | docker login -u $USER --password-stdin"
                             sh 'docker ardevopsun/simple-java-maven-app:jma-2.0'
