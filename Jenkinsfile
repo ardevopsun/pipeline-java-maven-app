@@ -1,20 +1,35 @@
 pipeline {
     agent any
-    stages {
-        stage("build") {
-            steps {
-                echo 'building the application ...'
-            }
+        tools {
+            maven "Maven"
         }
-        stage("test") {
-            steps {
-                echo 'testing the application...'
+        stages {
+            stage("build Jar") {
+                steps {
+                    script {
+                        echo "building the application ....."
+                        sh 'mvn package'
+                    }
+                }
             }
-        }
-         stage("deploy") {
-             steps {
-                 echo 'deploying the application...'
-             }
+            stage("build Image") {
+                steps {
+                    script {
+                        echo "building the docker image ..."
+                        withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVarible:'PASS', username: 'USER')]) {
+                            sh 'docker build -t ardevopsun/simple-java-maven-app:jma-2.0 .'
+                            sh "echo $PASS | docker login -u $USER --password-stdin"
+                            sh 'docker ardevopsun/simple-java-maven-app:jma-2.0'
+                        }                        }
+                        
+                    }
+                }
+            stage("deploy") {
+                steps {
+                    script {
+                        echo "deploying the application..."
+                     }
+                }
+            }
         }
     }
-  }
