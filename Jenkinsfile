@@ -1,9 +1,18 @@
+def gv
+
 pipeline {
     agent any
         tools {
             maven "Maven"
         }
         stages {
+            stage("init") {
+                steps {
+                    script {
+                        gv.buildJar()
+                    }
+                }
+            }
             stage("build Jar") {
                 steps {
                     script {
@@ -15,19 +24,14 @@ pipeline {
             stage("build Image") {
                 steps {
                     script {
-                        echo "building the docker image ..."
-                        withCredentials([usernamePassword(credentialsId: 'dockerHub-credntls', passwordVariable:'PASS', usernameVariable: 'USER')]) {
-                            sh 'docker build -t ardevopsun/simple-java-maven-app:jma-2.0 .'
-                            sh "echo $PASS | docker login -u $USER --password-stdin"
-                            sh 'docker push ardevopsun/simple-java-maven-app:jma-2.0'
-                        }                        }
-                        
+                        gv.buildImage()
+                            }                        
+                        }
                     }
-                }
             stage("deploy") {
                 steps {
                     script {
-                        echo "deploying the application..."
+                        gv.deployApp()
                      }
                 }
             }
