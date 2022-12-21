@@ -9,15 +9,14 @@ pipeline {
             stage("init") {
                 steps {
                     script {
-                        gv.buildJar()
+                        gv = load "script.groovy"
                     }
                 }
             }
-            stage("build Jar") {
+            stage("build jar") {
                 steps {
                     script {
-                        echo "building the application ....."
-                        sh 'mvn package'
+                        gv.buildJar()
                     }
                 }
             }
@@ -25,9 +24,9 @@ pipeline {
                 steps {
                     script {
                         gv.buildImage()
-                            }                        
-                        }
+                        }                        
                     }
+                }
             stage("deploy") {
                 steps {
                     script {
